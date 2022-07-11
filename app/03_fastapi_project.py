@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from app.models import mongodb
 
 # 절대경로 지정을 위해 import
 from pathlib import Path 
@@ -27,18 +28,19 @@ async def search(request: Request, q:str):
     return template.TemplateResponse("index.html", {"request": request, "title":'콜렉터 북북이', "keyword":q} )
 
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from odmantic import AIOEngine
+#from motor.motor_asyncio import AsyncIOMotorClient
+#from odmantic import AIOEngine
 
-from config  import MONGO_DB_NAME,MONGO_URL
+#from config  import MONGO_DB_NAME,MONGO_URL
 # 참고 https://art049.github.io/odmantic/engine/ engine코드 붙이고, MONGO_URL로 대치
 # 서버 구동될때 DB연결 startup 이벤트 생성
 @app3.on_event("startup")
 async def on_app_start():
     print("hellooo serverrrrr")
-    client = AsyncIOMotorClient(MONGO_URL)
-    engine = AIOEngine(motor_client=client, database=MONGO_DB_NAME)
-
+    #여기에다가 작성하면 스코프 문제가 있어서 다른 라우터 사용할 때 작동안됨
+    #client = AsyncIOMotorClient(MONGO_URL)
+    #engine = AIOEngine(motor_client=client, database=MONGO_DB_NAME)
+    mongodb.connect()
 
 # 서버꺼지면 구동되는 이벤트
 @app3.on_event("shutdown")
